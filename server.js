@@ -24,6 +24,41 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+function convertDate(date) {
+  return new Date(date);
+}
+
+app.get("/api/timestamp/:dateString" , (req, res) => {
+  let dateString = String(req.params.dateString);
+  let arr = dateString.split('-');
+  let date;
+
+  if ( arr.length == 1 ) {
+    date = parseInt( dateString );
+    let result = convertDate(date);
+    res.json({ 
+      unix: result.getTime(),
+      utc: result.toUTCString()
+     })
+  }
+
+  if ( arr.length > 1 ) {
+    let result = convertDate(date);
+    res.json({ 
+      unix: result.getTime(),
+      utc: result.toUTCString()
+     })
+  }
+
+  if ( arr.length == 0 ) {
+    let result = new Date();
+    res.json({ 
+      unix: result.getTime(),
+      utc: result.toUTCString()
+     })
+  }
+})
+
 
 
 // listen for requests :)
