@@ -4,6 +4,7 @@
 // init project
 var express = require('express');
 var app = express();
+var strftime = require('strftime');
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
@@ -29,33 +30,18 @@ function convertDate(date) {
 }
 
 app.get("/api/timestamp/:dateString" , (req, res) => {
-  let dateString = String(req.params.dateString);
-  let arr = dateString.split('-');
-  let date;
-
-  if ( arr.length == 1 ) {
-    date = parseInt( dateString );
-    let result = convertDate(date);
-    res.json({ 
-      unix: result.getTime(),
-      utc: result.toUTCString()
-     })
+  var num = Number(req.params.dateString);
+  if (isNaN(num)) {
+    var time = Date.parse(req.params.dateString);
   }
-
-  if ( arr.length > 1 ) {
-    let result = convertDate(date);
-    res.json({ 
-      unix: result.getTime(),
-      utc: result.toUTCString()
-     })
+  else{
+    var time = new Date(num*1000);
   }
-
-  if ( arr.length == 0 ) {
-    let result = new Date();
-    res.json({ 
-      unix: result.getTime(),
-      utc: result.toUTCString()
-     })
+  if (isNaN(time)) {
+    res.send({'unix':null,'natural':null});
+  }
+  else{
+    res.send({'unix':time/1000,'natural':strftime('%B %d, %Y', new Date(time))});
   }
 })
 
